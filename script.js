@@ -15,6 +15,10 @@ const ranks = [
   "A",
 ];
 
+let userChips = 1000;
+let aiChips = 1000;
+let pot = 0;
+
 let userHand = [];
 let aiHand = [];
 let communityCards = [];
@@ -23,6 +27,17 @@ function initializeGame() {
   userHand = drawCards(2);
   aiHand = drawCards(2);
   communityCards = drawCards(5);
+  pot = 0;
+  updateUI();
+}
+
+function resetGame() {
+  userHand = [];
+  aiHand = [];
+  communityCards = [];
+  pot = 0;
+  userChips = 1000;
+  aiChips = 1000;
   updateUI();
 }
 
@@ -44,25 +59,50 @@ function updateUI() {
     displayHand(communityCards);
   document.getElementById("user-chips").innerText = `Chips: ${userChips}`;
   document.getElementById("ai-chips").innerText = `Chips: ${aiChips}`;
-}
-
-function bet(amount) {
-  if (userChips >= amount) {
-    userChips -= amount;
-    aiChips -= amount;
-    updateUI();
-  } else {
-    alert("Not enough chips to bet!");
-  }
+  document.getElementById("status").innerText = `Pot: ${pot}`;
 }
 
 function displayHand(hand) {
   return hand.map((card) => `${card.rank} of ${card.suit}`).join(", ");
 }
 
-document.getElementById("play-button").addEventListener("click", () => {
-  bet(100);
-  initializeGame();
+function bet(amount) {
+  if (userChips >= amount) {
+    userChips -= amount;
+    pot += amount;
+    updateUI();
+    aiBet();
+  } else {
+    alert("Not enough chips to bet!");
+  }
+}
+
+function aiBet() {
+  const aiBetAmount = Math.floor(Math.random() * 100);
+  if (aiChips >= aiBetAmount) {
+    aiChips -= aiBetAmount;
+    pot += aiBetAmount;
+  }
+  updateUI();
+}
+
+document.getElementById("bet-button").addEventListener("click", () => {
+  const betAmount = parseInt(document.getElementById("bet-amount").value, 10);
+  if (!isNaN(betAmount) && betAmount > 0) {
+    bet(betAmount);
+    document.getElementById("bet-amount").value = "";
+  } else {
+    alert("Please enter a valid bet amount.");
+  }
 });
+
+document.getElementById("fold-button").addEventListener("click", () => {
+  alert("You folded!");
+  resetGame();
+});
+
+document
+  .getElementById("play-button")
+  .addEventListener("click", initializeGame);
 
 window.onload = initializeGame;

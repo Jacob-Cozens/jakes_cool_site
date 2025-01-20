@@ -4,11 +4,11 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="author" content="Jacob Cozens" />
-    <meta name="description" content="Jacob Cozens Portfolio" />
-    <meta name="keywords" content="HTML, CSS, JavaScript, Portfolio" />
+    <meta name="description" content="Jacob Cozens Gambling Site" />
+    <meta name="keywords" content="HTML, CSS, JavaScript, Poker" />
     <link rel="stylesheet" href="pages/index.css" />
     <link rel="shortcut icon" href="caticon.ico" />
-    <title>Jake's Cool Website</title>
+    <title>Jake's Poker Website</title>
   </head>
   <body>
     <div id="game-table">
@@ -19,6 +19,9 @@
               <h2>You</h2>
               <div class="chips" id="user-chips">Chips: 1000</div> <!-- Initial chips -->
               <div class="hand" id="user-hand"></div>
+              <input type="number" id="bet-amount" placeholder="Enter Bet Amount" />
+              <button id="bet-button">Bet</button>
+              <button id="fold-button">Fold</button>
           </div>
           <div class="player" id="ai">
               <h2>AI</h2>
