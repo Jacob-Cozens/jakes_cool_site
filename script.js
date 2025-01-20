@@ -23,22 +23,21 @@ let userHand = [];
 let aiHand = [];
 let communityCards = [];
 
-function initializeGame() {
+function resetGame() {
+  pot = 0;
+  userChips = 1000; // reset chips for demonstration
+  aiChips = 1000; // reset AI chips for demonstration
   userHand = drawCards(2);
   aiHand = drawCards(2);
-  communityCards = drawCards(5);
-  pot = 0;
+  communityCards = [];
+  userBetAmount = 0;
+  aiBetAmount = 0;
+  bettingRound = false;
   updateUI();
 }
 
-function resetGame() {
-  userHand = [];
-  aiHand = [];
-  communityCards = [];
-  pot = 0;
-  userChips = 1000;
-  aiChips = 1000;
-  updateUI();
+function initializeGame() {
+  resetGame();
 }
 
 function drawCards(num) {
@@ -54,12 +53,15 @@ function drawCards(num) {
 
 function updateUI() {
   document.getElementById("user-hand").innerText = displayHand(userHand);
-  document.getElementById("ai-hand").innerText = displayHand(aiHand);
-  document.getElementById("community-cards").innerText =
-    displayHand(communityCards);
+  document.getElementById("ai-hand").innerText = "AI's Hand is Hidden"; // AI's hand is hidden
+  document.getElementById("community-cards").innerText = bettingRound
+    ? displayHand(communityCards)
+    : "Community cards are hidden until betting complete.";
   document.getElementById("user-chips").innerText = `Chips: ${userChips}`;
   document.getElementById("ai-chips").innerText = `Chips: ${aiChips}`;
-  document.getElementById("status").innerText = `Pot: ${pot}`;
+  document.getElementById(
+    "status"
+  ).innerText = `Pot: ${pot} | Your Bet: ${userBetAmount} | AI Bet: ${aiBetAmount}`;
 }
 
 function displayHand(hand) {
@@ -70,7 +72,10 @@ function bet(amount) {
   if (userChips >= amount) {
     userChips -= amount;
     pot += amount;
+    userBetAmount += amount;
     updateUI();
+
+    // Simulate AI betting after user bets
     aiBet();
   } else {
     alert("Not enough chips to bet!");
@@ -78,26 +83,40 @@ function bet(amount) {
 }
 
 function aiBet() {
-  const aiBetAmount = Math.floor(Math.random() * 100);
-  if (aiChips >= aiBetAmount) {
+  if (aiChips > userBetAmount) {
+    aiBetAmount = userBetAmount; // AI matches the user's bet
     aiChips -= aiBetAmount;
     pot += aiBetAmount;
+  } else {
+    alert("AI folds!");
+    resetGame(); // Reset if AI folds for simplicity
+    return;
   }
-  updateUI();
+
+  // End betting round if both players have bet the same amount
+  if (userBetAmount === aiBetAmount) {
+    bettingRound = true;
+    communityCards = drawCards(5); // Deal community cards now that betting is completed
+    updateUI();
+  }
 }
 
 document.getElementById("bet-button").addEventListener("click", () => {
   const betAmount = parseInt(document.getElementById("bet-amount").value, 10);
   if (!isNaN(betAmount) && betAmount > 0) {
-    bet(betAmount);
-    document.getElementById("bet-amount").value = "";
+    if (!bettingRound) {
+      bet(betAmount);
+      document.getElementById("bet-amount").value = ""; // Clear input
+    } else {
+      alert("Betting is over, the community cards are revealed!");
+    }
   } else {
     alert("Please enter a valid bet amount.");
   }
 });
 
 document.getElementById("fold-button").addEventListener("click", () => {
-  alert("You folded!");
+  alert("You folded! The AI wins.");
   resetGame();
 });
 
