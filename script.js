@@ -25,8 +25,8 @@ let communityCards = [];
 
 function resetGame() {
   pot = 0;
-  userChips = 1000; // reset chips for demonstration
-  aiChips = 1000; // reset AI chips for demonstration
+  userChips = 1000;
+  aiChips = 1000;
   userHand = drawCards(2);
   aiHand = drawCards(2);
   communityCards = [];
@@ -51,9 +51,13 @@ function drawCards(num) {
   return deck.slice(0, num);
 }
 
+function displayAiHand(aiHand) {
+  return aiHand.map((card) => `${card.rank} of ${card.suit}`).join(", ");
+}
+
 function updateUI() {
   document.getElementById("user-hand").innerText = displayHand(userHand);
-  document.getElementById("ai-hand").innerText = "AI's Hand is Hidden"; // AI's hand is hidden
+  document.getElementById("ai-hand").innerText = displayAiHand(aiHand); // Reveal AI's hand
   document.getElementById("community-cards").innerText = bettingRound
     ? displayHand(communityCards)
     : "Community cards are hidden until betting complete.";
@@ -62,6 +66,9 @@ function updateUI() {
   document.getElementById(
     "status"
   ).innerText = `Pot: ${pot} | Your Bet: ${userBetAmount} | AI Bet: ${aiBetAmount}`;
+  document.getElementById("ai-hand").innerText = bettingRound
+    ? displayAiHand(aiHand) // Reveal AI's hand
+    : "AI's Hand is Hidden";
 }
 
 function displayHand(hand) {
@@ -74,8 +81,6 @@ function bet(amount) {
     pot += amount;
     userBetAmount += amount;
     updateUI();
-
-    // Simulate AI betting after user bets
     aiBet();
   } else {
     alert("Not enough chips to bet!");
@@ -84,19 +89,18 @@ function bet(amount) {
 
 function aiBet() {
   if (aiChips > userBetAmount) {
-    aiBetAmount = userBetAmount; // AI matches the user's bet
+    aiBetAmount = userBetAmount;
     aiChips -= aiBetAmount;
     pot += aiBetAmount;
   } else {
     alert("AI folds!");
-    resetGame(); // Reset if AI folds for simplicity
+    resetGame();
     return;
   }
 
-  // End betting round if both players have bet the same amount
   if (userBetAmount === aiBetAmount) {
     bettingRound = true;
-    communityCards = drawCards(5); // Deal community cards now that betting is completed
+    communityCards = drawCards(5);
     updateUI();
   }
 }
@@ -106,7 +110,7 @@ document.getElementById("bet-button").addEventListener("click", () => {
   if (!isNaN(betAmount) && betAmount > 0) {
     if (!bettingRound) {
       bet(betAmount);
-      document.getElementById("bet-amount").value = ""; // Clear input
+      document.getElementById("bet-amount").value = "";
     } else {
       alert("Betting is over, the community cards are revealed!");
     }
