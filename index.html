@@ -11,13 +11,24 @@
     <title>Jake's Cool Website</title>
   </head>
   <body>
-    <div class="page">
-      <header class="header"></header>
-      <main class="content">
-        <section class="intro">
-          <h1 class="intro__greet">CALLING ALL GAMERS</h1>
-        </section>
-      </main>
+    <div id="game-table">
+      <h1>Texas Hold'em Poker</h1>
+      <div id="players">
+        <div class="player" id="user">
+          <h2>You</h2>
+          <div class="hand" id="user-hand"></div>
+        </div>
+        <div class="player" id="ai">
+          <h2>AI</h2>
+          <div class="hand" id="ai-hand"></div>
+        </div>
+      </div>
+      <div id="community-cards"></div>
+      <div id="controls">
+        <button id="play-button">Play Hand</button>
+      </div>
+      <div id="status"></div>
     </div>
+    <script src="script.js"></script>
   </body>
 </html>
